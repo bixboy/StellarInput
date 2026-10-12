@@ -1,4 +1,5 @@
 #include "Manager/StellarInputManager.h"
+#include "StellarInputModule.h"
 #include "Data/StellarInputConfigAsset.h"
 #include "Interfaces/StellarInputReceiverInterface.h"
 #include "EnhancedInputComponent.h"
@@ -22,7 +23,7 @@ void UStellarInputManager::Initialize(APlayerController* InPlayerController, UEn
 	if (InEnhancedInputComponent)
 		RegisterInputComponent(InEnhancedInputComponent);
 
-	UE_LOG(LogTemp, Log, TEXT("StellarInputManager: Initialized for Controller '%s'"),
+	UE_LOG(LogStellarInput, Log, TEXT("StellarInputManager: Initialized for Controller '%s'"),
 		InPlayerController ? *InPlayerController->GetName() : TEXT("None"));
 }
 
@@ -67,7 +68,7 @@ FStellarInputContextHandle UStellarInputManager::PushContext(const UStellarInput
 	// Automatically bind actions from this config to all registered input components
 	BindConfigActions(InConfig);
 
-	UE_LOG(LogTemp, Log, TEXT("StellarInputManager: Pushed context '%s' (Priority %d, Handle %d)"),
+	UE_LOG(LogStellarInput, Log, TEXT("StellarInputManager: Pushed context '%s' (Priority %d, Handle %d)"),
 		*Handle.ContextName.ToString(), PriorityToApply, Handle.HandleId);
 
 	return Handle;
@@ -95,7 +96,7 @@ bool UStellarInputManager::PopContext(const FStellarInputContextHandle& InHandle
 			Subsystem->RemoveMappingContext(Record.ConfigAsset->MappingContext);
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("StellarInputManager: Popped context '%s' (Handle %d)"),
+	UE_LOG(LogStellarInput, Log, TEXT("StellarInputManager: Popped context '%s' (Handle %d)"),
 		*Record.Handle.ContextName.ToString(), Record.Handle.HandleId);
 
 	return true;
@@ -156,7 +157,7 @@ void UStellarInputManager::RegisterInputComponent(UEnhancedInputComponent* InEnh
 	if (!RegisteredInputComponents.Contains(InEnhancedInputComponent))
 	{
 		RegisteredInputComponents.Add(InEnhancedInputComponent);
-		UE_LOG(LogTemp, Display, TEXT("StellarInputManager: Registered InputComponent '%s' (Owner: '%s')"),
+		UE_LOG(LogStellarInput, Verbose, TEXT("StellarInputManager: Registered InputComponent '%s' (Owner: '%s')"),
 			*InEnhancedInputComponent->GetName(),
 			InEnhancedInputComponent->GetOwner() ? *InEnhancedInputComponent->GetOwner()->GetName() : TEXT("None"));
 	}
@@ -255,7 +256,7 @@ void UStellarInputManager::RegisterReceiver(UObject* InReceiver)
 
 	if (!InReceiver->GetClass()->ImplementsInterface(UStellarInputReceiverInterface::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("StellarInputManager: Receiver '%s' does not implement IStellarInputReceiverInterface!"), *InReceiver->GetName());
+		UE_LOG(LogStellarInput, Warning, TEXT("StellarInputManager: Receiver '%s' does not implement IStellarInputReceiverInterface!"), *InReceiver->GetName());
 		return;
 	}
 
@@ -263,7 +264,7 @@ void UStellarInputManager::RegisterReceiver(UObject* InReceiver)
 	if (!RegisteredReceivers.Contains(WeakObj))
 	{
 		RegisteredReceivers.Add(WeakObj);
-		UE_LOG(LogTemp, Display, TEXT("StellarInputManager: Registered Receiver '%s'"), *InReceiver->GetName());
+		UE_LOG(LogStellarInput, Verbose, TEXT("StellarInputManager: Registered Receiver '%s'"), *InReceiver->GetName());
 	}
 }
 

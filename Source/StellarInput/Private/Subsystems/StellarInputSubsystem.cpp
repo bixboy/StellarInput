@@ -1,4 +1,5 @@
 #include "Subsystems/StellarInputSubsystem.h"
+#include "StellarInputModule.h"
 #include "Data/StellarInputConfigAsset.h"
 #include "Interfaces/StellarInputReceiverInterface.h"
 #include "Manager/StellarInputManager.h"
@@ -42,7 +43,7 @@ UStellarInputSubsystem* UStellarInputSubsystem::Get(const UObject* WorldContextO
 void UStellarInputSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	UE_LOG(LogTemp, Log, TEXT("UStellarInputSubsystem: Initialized for LocalPlayer %s"), *GetLocalPlayer()->GetName());
+	UE_LOG(LogStellarInput, Log, TEXT("UStellarInputSubsystem: Initialized for LocalPlayer %s"), *GetLocalPlayer()->GetName());
 }
 
 void UStellarInputSubsystem::Deinitialize()
@@ -75,7 +76,7 @@ FStellarInputContextHandle UStellarInputSubsystem::PushInputConfig(const UStella
 	Record.AppliedPriority = PriorityToApply;
 	GlobalContextStack.Add(Record);
 
-	UE_LOG(LogTemp, Log, TEXT("UStellarInputSubsystem: Pushed config '%s' (Priority %d, Handle %d)"),
+	UE_LOG(LogStellarInput, Log, TEXT("UStellarInputSubsystem: Pushed config '%s' (Priority %d, Handle %d)"),
 		*Handle.ContextName.ToString(), PriorityToApply, Handle.HandleId);
 
 	return Handle;
@@ -103,7 +104,7 @@ bool UStellarInputSubsystem::PopInputConfig(const FStellarInputContextHandle& In
 			EISubsystem->RemoveMappingContext(Record.ConfigAsset->MappingContext);
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("UStellarInputSubsystem: Popped config '%s' (Handle %d)"),
+	UE_LOG(LogStellarInput, Log, TEXT("UStellarInputSubsystem: Popped config '%s' (Handle %d)"),
 		*Record.Handle.ContextName.ToString(), Record.Handle.HandleId);
 
 	return true;
@@ -147,7 +148,7 @@ void UStellarInputSubsystem::RegisterGlobalReceiver(UObject* InReceiver)
 
 	if (!InReceiver->GetClass()->ImplementsInterface(UStellarInputReceiverInterface::StaticClass()))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UStellarInputSubsystem: Receiver '%s' does not implement IStellarInputReceiverInterface!"), *InReceiver->GetName());
+		UE_LOG(LogStellarInput, Warning, TEXT("UStellarInputSubsystem: Receiver '%s' does not implement IStellarInputReceiverInterface!"), *InReceiver->GetName());
 		return;
 	}
 
@@ -224,7 +225,7 @@ void UStellarInputSubsystem::SetCurrentInputDevice(const EStellarInputDeviceType
 	{
 		CurrentDeviceType = InDeviceType;
 		OnInputDeviceChanged.Broadcast(CurrentDeviceType);
-		UE_LOG(LogTemp, Log, TEXT("UStellarInputSubsystem: Input device changed to %d"), static_cast<uint8>(InDeviceType));
+		UE_LOG(LogStellarInput, Log, TEXT("UStellarInputSubsystem: Input device changed to %d"), static_cast<uint8>(InDeviceType));
 	}
 }
 
