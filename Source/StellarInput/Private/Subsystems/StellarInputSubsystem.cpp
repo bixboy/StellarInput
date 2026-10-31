@@ -7,6 +7,7 @@
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/Pawn.h"
+#include "Engine/World.h"
 
 UStellarInputSubsystem* UStellarInputSubsystem::Get(const UObject* WorldContextObject)
 {
